@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import google.generativeai as genai
 import json
@@ -5,13 +6,14 @@ import re
 
 # --- UI CONFIGURATION ---
 st.set_page_config(
-    page_title="Last-Minute Lifesaver",
+    page_title="Deadline Dodger",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 # --- CUSTOM STYLING (Senior UX Design) ---
+st.success("Study roadmap generated!")
 st.markdown("""
     <style>
     .main { background-color: #0E1117; }
@@ -56,12 +58,27 @@ class CramEngine:
             return f"AI Error: {str(e)}"
 
 # --- APP INITIALIZATION ---
-st.sidebar.title("🛠️ Control Center")
-api_key = st.sidebar.text_input("Gemini API Key", type="password", help="Enter your Google AI Studio API Key")
+st.sidebar.title("🛠️📚 Deadline Dodger ")
+st.sidebar.markdown("""
+### About
+
+Built for **Vibe2Ship Hackathon 2026**
+
+**Powered by**
+- Google Gemini
+- Python
+- Streamlit
+
+💡 Enter your Gemini API key below to use the app.
+""")
+api_key = st.sidebar.text_input(...)
+api_key = os.getenv("GOOGLE_API_KEY")
 engine = CramEngine(api_key)
 
-st.markdown('<h1 class="header-gradient">Last-Minute Lifesaver</h1>', unsafe_allow_html=True)
-st.markdown("### *The Ultimate AI Cram Engine* ⚡")
+st.markdown('<h1 class="header-gradient">📚 Deadline Dodger</h1>', unsafe_allow_html=True)
+st.markdown(
+    "### *Beat your deadlines with AI-powered study plans, revision notes, and quizzes.* 🚀"
+)
 
 # --- SESSION STATE MGMT ---
 if 'quiz_data' not in st.session_state:
@@ -80,13 +97,13 @@ with tab1:
     with col1:
         time_left = st.number_input("Hours until deadline:", min_value=1, max_value=72, value=5)
         subject = st.text_input("Subject/Topic:", placeholder="e.g., Organic Chemistry")
-        btn_schedule = st.button("Generate Strict Schedule")
+        btn_schedule = st.button("🚀 Generate Study Roadmap")
     
     with col2:
-        syllabus = st.text_area("Paste Syllabus/Guidelines:", height=200, placeholder="Paste your messy notes or curriculum here...")
+        syllabus = st.text_area("Paste your syllabus, lecture notes, assignment details, or project brief here...")
         
     if btn_schedule:
-        with st.spinner("Calculating maximum efficiency..."):
+        with st.spinner("🤖 Gemini is creating your personalized study roadmap..."):
             prompt = f"""
             Act as a high-performance productivity coach. I have an exam/submission in {time_left} hours.
             Subject: {subject}
@@ -101,11 +118,11 @@ with tab1:
 # --- FEATURE 2: CHEAT-SHEET ---
 with tab2:
     st.header("2. Instant Cheat-Sheet")
-    content = st.text_area("Input Study Material:", height=250, key="cs_input", placeholder="Dump all your raw text here...")
+    content = st.text_area("Input Study Material:", height=250, key="cs_input", placeholder="Paste your study material here...")
     
-    if st.button("Distill to Essentials"):
+    if st.button("📝 Generate Cheat Sheet"):
         if content:
-            with st.spinner("Extracting core logic..."):
+            with st.spinner("📝 Creating your revision cheat sheet..."):
                 prompt = f"""
                 Convert the following text into a 'last-minute' cheat sheet:
                 {content}
@@ -124,10 +141,10 @@ with tab2:
 # --- FEATURE 3: MOCK EXAMINER ---
 with tab3:
     st.header("3. AI Mock Examiner")
-    quiz_topic = st.text_input("Quiz Topic:", placeholder="e.g., Newton's Laws of Motion")
+    quiz_topic = st.text_input("Quiz Topic:", placeholder="Enter the topic you want to practice")
     
-    if st.button("Generate 5-Question Blitz"):
-        with st.spinner("Generating challenges..."):
+    if st.button("🧠 Generate Mock Quiz"):
+        with st.spinner("🧠 Preparing your mock exam..."):
             prompt = f"""
             Generate a 5-question multiple choice quiz on {quiz_topic}.
             Format the response strictly as a JSON list of objects like this:
@@ -174,4 +191,5 @@ with tab3:
 
 # --- FOOTER ---
 st.markdown("---")
-st.caption("Last-Minute Lifesaver | Built for the Hackathon | Powered by Gemini 1.5 Flash")
+st.caption("Deadline Dodger | Built for the Hackathon |  Made with ❤️ for Vibe2Ship Hackathon")
+
