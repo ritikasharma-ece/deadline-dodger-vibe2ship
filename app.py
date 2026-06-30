@@ -13,7 +13,6 @@ st.set_page_config(
 )
 
 # --- CUSTOM STYLING (Senior UX Design) ---
-st.success("Study roadmap generated!")
 st.markdown("""
     <style>
     .main { background-color: #0E1117; }
