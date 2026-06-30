@@ -44,14 +44,17 @@ class CramEngine:
     def __init__(self, api_key):
         if api_key:
             genai.configure(api_key=api_key)
-            self.model = genai.GenerativeModel('gemini-1.5-flash')
+            self.model = genai.GenerativeModel('gemini-2.5-flash')
         else:
             self.model = None
 
     def call_ai(self, prompt):
         try:
             if not self.model:
-                return "Error: Please provide a valid Gemini API Key in the sidebar."
+             return (
+            "❌ Gemini API key is not configured. "
+            "Please set the GOOGLE_API_KEY environment variable."
+    )
             response = self.model.generate_content(prompt)
             return response.text
         except Exception as e:
@@ -71,10 +74,13 @@ Built for **Vibe2Ship Hackathon 2026**
 
 💡 Enter your Gemini API key below to use the app.
 """)
-api_key = st.sidebar.text_input(...)
-api_key = os.getenv("GOOGLE_API_KEY")
-engine = CramEngine(api_key)
+api_key = st.sidebar.text_input(
+    "Gemini API Key",
+    type="password",
+    help="Paste your Gemini API key here"
+)
 
+engine = CramEngine(api_key)
 st.markdown('<h1 class="header-gradient">📚 Deadline Dodger</h1>', unsafe_allow_html=True)
 st.markdown(
     "### *Beat your deadlines with AI-powered study plans, revision notes, and quizzes.* 🚀"
@@ -87,7 +93,7 @@ if 'quiz_submitted' not in st.session_state:
     st.session_state.quiz_submitted = False
 
 # --- TABS INTERFACE ---
-tab1, tab2, tab3 = st.tabs(["🕒 Cram Schedule", "📝 Cheat-Sheet", "🧠 Mock Examiner"])
+tab1, tab2, tab3 = st.tabs(["🕒Study Roadmap ", "📝 Cheat-Sheet", "🧠 Mock Examiner"])
 
 # --- FEATURE 1: CRAM SCHEDULE ---
 with tab1:
@@ -105,12 +111,38 @@ with tab1:
     if btn_schedule:
         with st.spinner("🤖 Gemini is creating your personalized study roadmap..."):
             prompt = f"""
-            Act as a high-performance productivity coach. I have an exam/submission in {time_left} hours.
+            You are an expert study planner helping a student prepare for an exam.
+
+            Exam in: {time_left} hours
             Subject: {subject}
-            Syllabus: {syllabus}
-            Create a strict, hour-by-hour action plan. Include 5-minute 'sanity breaks'. 
-            Focus ONLY on high-yield topics that provide 80% of results. 
-            Format as a clear Markdown table.
+
+            Syllabus:
+            {syllabus}
+
+            Generate a personalized study roadmap in Markdown.
+
+            Requirements:
+            - Divide the schedule hour by hour.
+            - Mention exactly what to study each hour.
+            - Explain why each topic is important.
+            - Include one short revision break every 2 hours.
+            - Highlight the highest-priority topics.
+            - End with a 15-minute final revision checklist.
+
+            Format:
+
+            ## 📅 Study Roadmap
+
+            | Time | Task | Reason |
+            |------|------|--------|
+
+            ## ⭐ High Priority Topics
+
+            - ...
+
+            ## ✅ Final Revision Checklist
+
+            - ...
             """
             result = engine.call_ai(prompt)
             st.markdown(result)
@@ -187,9 +219,12 @@ with tab3:
             
             st.metric("Final Score", f"{score}/5")
             if score == 5:
-                st.balloons()
-
-# --- FOOTER ---
+                st.success("🌟 Outstanding! You're exam-ready.")
+            elif score >= 3:
+                st.info("👍 Good job! Review the incorrect answers once more.")
+            else:
+                st.warning("📚 Keep practicing. Try another quiz to improve your understanding.")
+            # --- FOOTER ---
 st.markdown("---")
 st.caption("Deadline Dodger | Built for the Hackathon |  Made with ❤️ for Vibe2Ship Hackathon")
 
