@@ -45,3 +45,6 @@ streamlit run app.py
 As a student, I know how stressful it gets when multiple deadlines are close together. I wanted to build something that could save time by organizing study material into a practical plan instead of making students do everything manually.
 
 This project was built as part of the Vibe2Ship Hackathon using Python, Streamlit, and Google Gemini.
+<img width="957" height="973" alt="image" src="https://github.com/user-attachments/assets/6ec35245-6ef6-45a7-888f-1bdd1dba807f" />
+<img width="957" height="1057" alt="image" src="https://github.com/user-attachments/assets/ef4bfa76-2704-46d6-b7f6-7d685ea2f810" />
+
